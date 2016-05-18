@@ -2,19 +2,22 @@
 
 import pickle
 import numpy
+from sklearn.metrics import accuracy_score
+from sklearn import tree
 numpy.random.seed(42)
 
 
 ### The words (features) and authors (labels), already largely processed.
 ### These files should have been created from the previous (Lesson 10)
 ### mini-project.
-words_file = "../text_learning/your_word_data.pkl" 
+words_file = "../text_learning/your_word_data.pkl"
 authors_file = "../text_learning/your_email_authors.pkl"
 word_data = pickle.load( open(words_file, "r"))
 authors = pickle.load( open(authors_file, "r") )
-
-
-
+to_remove = ['sshacklensf', 'cgermannsf']
+for idx, mail in enumerate(word_data):
+    for word in to_remove:
+        word_data[idx] = word_data[idx].replace(word, '')
 ### test_size is the percentage of events assigned to the test set (the
 ### remainder go into training)
 ### feature matrices changed to dense representations for compatibility with
@@ -38,6 +41,11 @@ labels_train   = labels_train[:150]
 
 
 ### your code goes here
-
-
-
+clf = tree.DecisionTreeClassifier()
+clf.fit(features_train, labels_train)
+pred = clf.predict(features_test)
+print accuracy_score(pred, labels_test)
+m = max(clf.feature_importances_)
+print m
+i = clf.feature_importances_.tolist().index(m)
+print vectorizer.get_feature_names()[i]
